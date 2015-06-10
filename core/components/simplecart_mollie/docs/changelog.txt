@@ -1,0 +1,3 @@
+SimpleCart Mollie v1.0.0-pl (April 8, 2015)
+====================================
+- Initial project
