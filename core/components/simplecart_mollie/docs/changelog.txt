@@ -1,3 +1,9 @@
-SimpleCart Mollie v1.0.0-pl (April 8, 2015)
-====================================
+++ Mollie Gateway for SimpleCart v1.1.0-pl
+++ Released on June 10, 2015
+++++++++++++++++++++++++++++++++++++++++++
+- Mollie Gateway is now maintained and distributed by modmore.com
+
+++ Mollie Gateway for SimpleCart v1.0.0-pl
+++ Released on April 8, 2015
+++++++++++++++++++++++++++++++++++++++++++
 - Initial project
