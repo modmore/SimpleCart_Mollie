@@ -125,7 +125,8 @@ class SimpleCartMolliePaymentGateway extends SimpleCartGateway
             if (!array_key_exists($paymentKey, $params) || stristr($params[$paymentKey], '~') === false) {
                 throw new Mollie_API_Exception('No method selected! Expecting "' . $paymentKey . '", with format "{id}-{method.id}".');
             }
-            $subMethod = explode('~', $params[$paymentKey])[0];
+            $subMethod = explode('~', $params[$paymentKey]);
+            $subMethod = $subMethod[0];
             $method = $this->mollie->methods->get($subMethod);
 
             if (empty($method) || $method->id != $subMethod) {

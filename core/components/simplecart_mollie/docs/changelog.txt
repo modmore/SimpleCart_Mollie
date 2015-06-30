@@ -1,3 +1,5 @@
+- Fix syntax issue on PHP 5.3 or older
+
 ++ Mollie Gateway for SimpleCart v1.1.0-pl
 ++ Released on June 10, 2015
 ++++++++++++++++++++++++++++++++++++++++++
