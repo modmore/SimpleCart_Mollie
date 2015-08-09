@@ -1,3 +1,8 @@
+++ Mollie Gateway for SimpleCart v1.1.2-pl
+++ Released on August 10, 2015
+++++++++++++++++++++++++++++++++++++++++++
+- Add SimpleCart as dependency for MODX Revolution 2.4+
+
 ++ Mollie Gateway for SimpleCart v1.1.1-pl
 ++ Released on June 30, 2015
 ++++++++++++++++++++++++++++++++++++++++++
