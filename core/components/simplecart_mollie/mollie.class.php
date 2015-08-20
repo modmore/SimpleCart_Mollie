@@ -148,6 +148,7 @@ class SimpleCartMolliePaymentGateway extends SimpleCartGateway
                 'amount' => str_replace(',', '.', $this->order->get('total')),
                 'description' => $this->modx->lexicon('simplecart.methods.yourorderat', array(
                     'site_name' => $this->modx->getOption('site_name'),
+                    '+site_name' => $this->modx->getOption('site_name'),
                     'site_url' => $this->modx->getOption('site_url'),
                 )),
                 'method' => $method->id,
