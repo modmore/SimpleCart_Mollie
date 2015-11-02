@@ -2,7 +2,7 @@
 
 $_lang['simplecart.methods.payment.mollie'] = "Mollie";
 $_lang['simplecart.methods.payment.mollie.desc'] = "Pay your order easy with the online payment method Mollie.";
-$_lang['simplecart.methods.payment.mollie.orderdesc'] = "You've payed your order with Mollie. We successfully have received the payment and your order will be shipped.";
+$_lang['simplecart.methods.payment.mollie.orderdesc'] = "You've paid your order with Mollie. We have successfully received the payment and your order will be shipped.";
 
 // properties
 $_lang['simplecart.methods.payment.mollie.property_api_key'] = "API Key";
