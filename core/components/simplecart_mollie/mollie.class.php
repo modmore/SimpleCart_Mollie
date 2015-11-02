@@ -53,7 +53,6 @@ class SimpleCartMolliePaymentGateway extends SimpleCartGateway
             /** @var Mollie_Api_Object_Method[] $methods */
             $methods = $this->mollie->methods->all()->getIterator();
             foreach ($methods as $key => $method) {
-
                 if (!empty($filtered) && !in_array($method->id, $filtered)) { continue; }
 
                 $phs = $mPhs;
@@ -67,23 +66,31 @@ class SimpleCartMolliePaymentGateway extends SimpleCartGateway
                 if (!empty($title) && $title != $lexiconKey) {
                     $phs['title'] = $title;
                 }
-
-                $lexiconKey .= '.desc';
-                $description = (string) $this->modx->lexicon($lexiconKey);
-                if (!empty($description) && $description != $lexiconKey) {
-                    $phs['description'] = $description;
+                else {
+                    $phs['title'] = $method->id;
                 }
 
-                $lexiconKey .= '.orderdesc';
-                $description = (string) $this->modx->lexicon($lexiconKey);
-                if (!empty($description) && $description != $lexiconKey) {
+                $lexiconKeyDesc = $lexiconKey . '.desc';
+                $description = (string) $this->modx->lexicon($lexiconKeyDesc);
+                if (!empty($description) && $description != $lexiconKeyDesc) {
+                    $phs['description'] = $description;
+                }
+                else {
+                    $phs['description'] = '';
+                }
+
+                $lexiconKeyOD = $lexiconKey . '.orderdesc';
+                $description = (string) $this->modx->lexicon($lexiconKeyOD);
+                if (!empty($description) && $description != $lexiconKeyOD) {
                     $phs['orderdesc'] = $description;
+                }
+                else {
+                    $phs['orderdesc'] = '';
                 }
 
                 // when the method has it's own "getContent" method, get it and add to the output
                 $contentFunction  = 'get' . ucfirst($method->id) . 'Content';
                 if (method_exists($this, $contentFunction)) {
-
                     $addContent = $this->$contentFunction();
                     if (!empty($addContent)) {
                         $phs['addContent'] = $addContent;
@@ -165,9 +172,9 @@ class SimpleCartMolliePaymentGateway extends SimpleCartGateway
             $this->order->save();
 
             $this->modx->sendRedirect($payment->getPaymentUrl());
+            return true;
         }
         catch (Mollie_API_Exception $e) {
-
             $this->modx->log(modX::LOG_LEVEL_ERROR, '[SimpleCart] Mollie Error: ' . $e->getMessage());
             return false;
         }
