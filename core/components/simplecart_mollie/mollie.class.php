@@ -175,6 +175,7 @@ class SimpleCartMolliePaymentGateway extends SimpleCartGateway
             return true;
         }
         catch (Mollie_API_Exception $e) {
+            $this->order->addLog('Mollie Exception', $e->getMessage());
             $this->modx->log(modX::LOG_LEVEL_ERROR, '[SimpleCart] Mollie Error: ' . $e->getMessage());
             return false;
         }
@@ -211,7 +212,6 @@ class SimpleCartMolliePaymentGateway extends SimpleCartGateway
             return false;
         }
         catch (Mollie_API_Exception $e) {
-
             $this->modx->log(modX::LOG_LEVEL_ERROR, '[SimpleCart] Mollie Error: ' . $e->getMessage());
             return false;
         }
@@ -223,6 +223,7 @@ class SimpleCartMolliePaymentGateway extends SimpleCartGateway
 
         $apiKey = $this->getProperty('api_key');
         if (empty($apiKey)) {
+            $this->modx->log(modX::LOG_LEVEL_ERROR, 'Could not instantiate Mollie gateway, missing api_key property.', '', __METHOD__, __FILE__, __LINE__);
             return false;
         }
 
