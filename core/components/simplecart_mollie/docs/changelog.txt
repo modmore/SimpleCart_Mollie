@@ -1,3 +1,11 @@
+++ Mollie Gateway for SimpleCart v1.1.4-pl
+++ Released on November 2, 2015
+++++++++++++++++++++++++++++++++++++++++++
+- Fix typos and grammar in several lexicon entries
+- Fix issue where new gateways are not shown properly until a matching lexicon is added
+- Add lexicon entries for Belfius and Direct Debit gateways
+- Make sure errors from instantiating and submitting the gateway are logged properly
+
 ++ Mollie Gateway for SimpleCart v1.1.3-pl
 ++ Released on August 21, 2015
 ++++++++++++++++++++++++++++++++++++++++++
