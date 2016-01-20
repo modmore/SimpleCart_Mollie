@@ -160,7 +160,7 @@ class SimpleCartMolliePaymentGateway extends SimpleCartGateway
                 throw new Mollie_API_Exception('No iDeal Issuer selected! Expecting "ideal_issuer" field to be submitted.');
             }
 
-            $webhookUrl = rtrim($this->modx->getOption('site_url'), '/');
+            $webhookUrl = $this->modx->getOption('server_protocol') . '://' . $this->modx->getOption('http_host');
             $webhookUrl .= $this->service->config['connectorUrl'] . '?action=webhook';
 
             /** @var Mollie_Api_Object_Payment $payment */

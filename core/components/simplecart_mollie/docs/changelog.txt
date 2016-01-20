@@ -1,3 +1,8 @@
+++ Mollie Gateway for SimpleCart v1.2.1-pl
+++ Released on January 20, 2016
+++++++++++++++++++++++++++++++++++++++++++
+- Fix generation of webhookUrl value on sites in subdirectories [S7724]
+
 ++ Mollie Gateway for SimpleCart v1.2.0-pl
 ++ Released on January 20, 2016
 ++++++++++++++++++++++++++++++++++++++++++
