@@ -1,3 +1,6 @@
+++ Mollie Gateway for SimpleCart v1.2.0-pl
+++ Released on January 20, 2016
+++++++++++++++++++++++++++++++++++++++++++
 - Include MIT license in package
 - Only allow payment methods if the cart total falls within the Mollie minimum and maximum amounts [#1]
 
