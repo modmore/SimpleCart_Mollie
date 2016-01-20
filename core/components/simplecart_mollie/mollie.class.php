@@ -50,10 +50,23 @@ class SimpleCartMolliePaymentGateway extends SimpleCartGateway
                 }
             }
 
+            $total = $this->method->cartTotal;
+
             /** @var Mollie_Api_Object_Method[] $methods */
             $methods = $this->mollie->methods->all()->getIterator();
             foreach ($methods as $key => $method) {
-                if (!empty($filtered) && !in_array($method->id, $filtered)) { continue; }
+                if (!empty($filtered) && !in_array($method->id, $filtered)) {
+                    continue;
+                }
+
+                // Only show payment methods that allow transactions within the provided range
+                if (
+                    ($total > (float)$method->amount->maximum)
+                    || ($total < (float)$method->amount->minimum)
+                ) {
+                    continue;
+                }
+
 
                 $phs = $mPhs;
                 $phs['idx'] = $idx;
