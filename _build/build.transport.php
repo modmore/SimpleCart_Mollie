@@ -115,6 +115,7 @@ $modx->log(xPDO::LOG_LEVEL_INFO, 'Files for "' . PKG_NAME_LOWER . '" packaged.')
 /* now pack in the license file, readme and setup options */
 $attributes = array(
     'readme' => file_get_contents($sources['source_core'] . '/docs/readme.txt'),
+    'license' => file_get_contents($sources['source_core'] . '/docs/license.txt'),
     'changelog' => file_get_contents($sources['source_core'] . '/docs/changelog.txt'),
     'setup-options' => array(
         'source' => $sources['install_options'] . 'input.options.php',

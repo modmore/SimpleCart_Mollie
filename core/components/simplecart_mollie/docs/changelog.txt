@@ -1,3 +1,5 @@
+- Include MIT license in package
+
 ++ Mollie Gateway for SimpleCart v1.1.4-pl
 ++ Released on November 2, 2015
 ++++++++++++++++++++++++++++++++++++++++++
