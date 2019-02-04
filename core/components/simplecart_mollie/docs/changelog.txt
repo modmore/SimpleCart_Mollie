@@ -1,3 +1,8 @@
+++ Mollie Gateway for SimpleCart v1.2.2-pl
+++ Released on February 4, 2019
+++++++++++++++++++++++++++++++++++++++++++
+- Mark transactions via Mollie as asynchronous to make sure the "Payment is pending" view is shown when returning from the hosted payment page before the webhook was sent. [S19335]
+
 ++ Mollie Gateway for SimpleCart v1.2.1-pl
 ++ Released on January 20, 2016
 ++++++++++++++++++++++++++++++++++++++++++

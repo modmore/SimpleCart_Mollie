@@ -154,7 +154,7 @@ class SimpleCartMolliePaymentGateway extends SimpleCartGateway
             }
 
             if (
-                $method->id == 'ideal'
+                $method->id === 'ideal'
                 && (!$this->hasField('mollie_ideal_issuer') || $this->getField('mollie_ideal_issuer') == '')
             ) {
                 throw new Mollie_API_Exception('No iDeal Issuer selected! Expecting "ideal_issuer" field to be submitted.');
@@ -172,7 +172,7 @@ class SimpleCartMolliePaymentGateway extends SimpleCartGateway
                     'site_url' => $this->modx->getOption('site_url'),
                 )),
                 'method' => $method->id,
-                'issuer' => ($this->hasField('mollie_ideal_issuer')) ? $this->getField('mollie_ideal_issuer') : null,
+                'issuer' => $this->hasField('mollie_ideal_issuer') ? $this->getField('mollie_ideal_issuer') : null,
                 'metadata' => array(
                     'order_id' => $this->order->get('id'),
                     'order_nr' => $this->order->get('ordernr'),
@@ -182,6 +182,7 @@ class SimpleCartMolliePaymentGateway extends SimpleCartGateway
             ));
 
             $this->order->addLog('Mollie Transaction ID', $payment->id);
+            $this->order->set('async_payment_confirmation', true);
             $this->order->save();
 
             $this->modx->sendRedirect($payment->getPaymentUrl());
