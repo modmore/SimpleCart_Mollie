@@ -19,11 +19,17 @@ class SimpleCartMollieWebHookProcessor extends modProcessor
 
             $transId = $this->modx->getOption('id', $_REQUEST, '');
             if (empty($transId)) {
+                $this->modx->log(modX::LOG_LEVEL_ERROR, '[SimpleCart.Mollie] Webhook triggered, but no `id` present in request.');
                 return $this->failure('Failed to get the Transaction ID');
             }
 
             /** @var Mollie_Api_Object_Payment $payment */
-            $payment = $method->gateway->mollie->payments->get($transId);
+            try {
+                $payment = $method->gateway->mollie->payments->get($transId);
+            } catch (Mollie_API_Exception $e) {
+                $this->modx->log(modX::LOG_LEVEL_ERROR, '[SimpleCart.Mollie] Webhook triggered for payment ' . $transId . ', received exception  ' . get_class($e) . ': ' . $e->getMessage());
+                return $this->failure('Failed to load the order');
+            }
 
             // get metadata to get the order
             $orderId = $payment->metadata->order_id;
@@ -32,6 +38,7 @@ class SimpleCartMollieWebHookProcessor extends modProcessor
             /** @var simpleCartOrder $order */
             $order = $this->modx->getObject('simpleCartOrder', array('id' => $orderId, 'ordernr' => $orderNr));
             if (empty($order) || !is_object($order)) {
+                $this->modx->log(modX::LOG_LEVEL_ERROR, '[SimpleCart.Mollie] Webhook triggered for payment ' . $transId . ', but order not found with id = ' . $orderId . ' and ordernr = ' . $orderNr);
                 return $this->failure('Failed to load the order');
             }
 
@@ -41,7 +48,6 @@ class SimpleCartMollieWebHookProcessor extends modProcessor
             }
 
             if ($payment->isPaid()) {
-
                 $order->addLog('Mollie Payment', 'Confirmed');
                 $order->setStatus('finished');
                 $order->save();
