@@ -1,3 +1,5 @@
+- Make sure a cancelled/failed transaction is no longer marked as waiting for an asynchronous verification
+
 ++ Mollie Gateway for SimpleCart v1.2.2-pl
 ++ Released on February 4, 2019
 ++++++++++++++++++++++++++++++++++++++++++

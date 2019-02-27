@@ -50,6 +50,7 @@ class SimpleCartMollieWebHookProcessor extends modProcessor
             if ($payment->isPaid()) {
                 $order->addLog('Mollie Payment', 'Confirmed');
                 $order->setStatus('finished');
+                $order->set('async_payment_confirmation', false);
                 $order->save();
 
                 return $this->success('Order ' . $order->get('ordernr') . ' confirmed');
@@ -58,6 +59,7 @@ class SimpleCartMollieWebHookProcessor extends modProcessor
 
                 $order->addLog('Mollie Payment Failed', $payment->status);
                 $order->setStatus('payment_failed');
+                $order->set('async_payment_confirmation', false);
                 $order->save();
             }
         }
