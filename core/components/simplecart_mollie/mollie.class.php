@@ -170,6 +170,7 @@ class SimpleCartMolliePaymentGateway extends SimpleCartGateway
                     'site_name' => $this->modx->getOption('site_name'),
                     '+site_name' => $this->modx->getOption('site_name'),
                     'site_url' => $this->modx->getOption('site_url'),
+                    'ordernr' => $this->order->get('ordernr'),
                 )),
                 'method' => $method->id,
                 'issuer' => $this->hasField('mollie_ideal_issuer') ? $this->getField('mollie_ideal_issuer') : null,
