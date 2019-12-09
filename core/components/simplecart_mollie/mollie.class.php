@@ -205,20 +205,20 @@ class SimpleCartMolliePaymentGateway extends SimpleCartGateway
             $transId = $this->order->getLog('Mollie Transaction ID');
             if (empty($transId)) { return false; }
 
-            $value = $this->order->getLog('Mollie Payment');
-            if (empty($value) || strtolower($value) != 'confirmed') { return false; }
+            $storedStatus = $this->order->getLog('Mollie Payment');
+            if (empty($storedStatus) || strtolower($storedStatus) !== 'confirmed') { return false; }
 
             $payment = $this->mollie->payments->get($transId);
             if ($payment->isPaid()) {
-
-                $this->order->addLog('Mollie Payment', 'Confirmed');
-                $this->order->setStatus('finished');
-                $this->order->save();
+                if ($storedStatus !== 'Confirmed') {
+                    $this->order->addLog('Mollie Payment', 'Confirmed');
+                    $this->order->setStatus('finished');
+                    $this->order->save();
+                }
 
                 return true;
             }
-            else if (!$payment->isOpen()) {
-
+            if (!$payment->isOpen()) {
                 $this->order->addLog('Mollie Payment Failed', $payment->status);
                 $this->order->setStatus('payment_failed');
                 $this->order->save();

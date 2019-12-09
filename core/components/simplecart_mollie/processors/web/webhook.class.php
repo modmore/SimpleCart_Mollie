@@ -43,21 +43,25 @@ class SimpleCartMollieWebHookProcessor extends modProcessor
             }
 
             $value = $order->getLog('Mollie Payment');
-            if (strtolower($value) == 'confirmed') {
+            if (strtolower($value) === 'confirmed') {
                 return $this->failure('Order already confirmed');
             }
 
             if ($payment->isPaid()) {
                 $order->addLog('Mollie Payment', 'Confirmed');
+                $order->addLog('Mollie Payment Source', 'Webhook');
                 $order->setStatus('finished');
                 $order->set('async_payment_confirmation', false);
                 $order->save();
+                if (!$order->get('confirmation_sent')) {
+                    $order->resendConfirmation();
+                }
 
                 return $this->success('Order ' . $order->get('ordernr') . ' confirmed');
             }
-            else if (!$payment->isOpen()) {
-
+            if (!$payment->isOpen()) {
                 $order->addLog('Mollie Payment Failed', $payment->status);
+                $order->addLog('Mollie Payment Source', 'Webhook');
                 $order->setStatus('payment_failed');
                 $order->set('async_payment_confirmation', false);
                 $order->save();
