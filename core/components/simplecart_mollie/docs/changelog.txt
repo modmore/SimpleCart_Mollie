@@ -1,3 +1,7 @@
+Mollie Gateway for SimpleCart v1.3.1-pl
+----------------------------------------------
+Released on 2019-11-13
+
 - Improve webhook handling (with SimpleCart v2.8.0-rc2 or up!)
 
 Mollie Gateway for SimpleCart v1.3.0-pl
