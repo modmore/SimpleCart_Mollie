@@ -205,8 +205,11 @@ class SimpleCartMolliePaymentGateway extends SimpleCartGateway
             $transId = $this->order->getLog('Mollie Transaction ID');
             if (empty($transId)) { return false; }
 
+            // If previously stored as confirmed, we don't double check the API
             $storedStatus = $this->order->getLog('Mollie Payment');
-            if (empty($storedStatus) || strtolower($storedStatus) !== 'confirmed') { return false; }
+            if ($storedStatus === 'Confirmed') {
+                return true;
+            }
 
             $payment = $this->mollie->payments->get($transId);
             if ($payment->isPaid()) {
@@ -218,6 +221,7 @@ class SimpleCartMolliePaymentGateway extends SimpleCartGateway
 
                 return true;
             }
+            // not paid + not pending = some kind of failure
             if (!$payment->isOpen()) {
                 $this->order->addLog('Mollie Payment Failed', $payment->status);
                 $this->order->setStatus('payment_failed');

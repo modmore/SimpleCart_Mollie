@@ -38,23 +38,28 @@ class SimpleCartMollieWebHookProcessor extends modProcessor
             /** @var simpleCartOrder $order */
             $order = $this->modx->getObject('simpleCartOrder', array('id' => $orderId, 'ordernr' => $orderNr));
             if (empty($order) || !is_object($order)) {
+                http_response_code(400);
                 $this->modx->log(modX::LOG_LEVEL_ERROR, '[SimpleCart.Mollie] Webhook triggered for payment ' . $transId . ', but order not found with id = ' . $orderId . ' and ordernr = ' . $orderNr);
                 return $this->failure('Failed to load the order');
             }
 
-            $value = $order->getLog('Mollie Payment');
-            if (strtolower($value) === 'confirmed') {
-                return $this->failure('Order already confirmed');
+            // prevent double processing of the webhook logic
+            $value = $order->getLog('Mollie Payment Source');
+            if (strtolower($value) === 'Webhook') {
+                return $this->failure('Payment already confirmed');
             }
 
             if ($payment->isPaid()) {
                 $order->addLog('Mollie Payment', 'Confirmed');
                 $order->addLog('Mollie Payment Source', 'Webhook');
                 $order->setStatus('finished');
-                $order->set('async_payment_confirmation', false);
+//                We no longer unset this value. It is used in the Order finish handling to prevent duplicate sends,
+//                which means that the gateway is responsible for sending the confirmation at all times.
+//                $order->set('async_payment_confirmation', false);
                 $order->save();
                 if (!$order->get('confirmation_sent')) {
-                    $order->resendConfirmation();
+                    // This triggers a request to the checkout finish page that handles hooks and email sending
+                    $order->processOrder();
                 }
 
                 return $this->success('Order ' . $order->get('ordernr') . ' confirmed');
