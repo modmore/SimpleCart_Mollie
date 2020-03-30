@@ -7,8 +7,8 @@ if (!defined('MOREPROVIDER_BUILD')) {
     /* define version */
     define('PKG_NAME', 'SimpleCart Mollie');
     define('PKG_NAMESPACE', 'simplecart_mollie');
-    define('PKG_VERSION', '1.1.0');
-    define('PKG_RELEASE', 'dev1');
+    define('PKG_VERSION', '1.3.2');
+    define('PKG_RELEASE', 'pl');
 
     /* load modx */
     require_once dirname(dirname(__FILE__)) . '/config.core.php';
