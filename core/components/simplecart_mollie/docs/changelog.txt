@@ -1,3 +1,10 @@
+Mollie Gateway for SimpleCart v2.0.0-pl
+----------------------------------------------
+Released on 2024-12-04
+
+- Upgrade to iDeal 2.0 (by no longer listing or validating the issuer)
+
+
 Mollie Gateway for SimpleCart v1.3.2-pl
 ----------------------------------------------
 Released on 2020-03-30

@@ -153,13 +153,6 @@ class SimpleCartMolliePaymentGateway extends SimpleCartGateway
                 throw new Mollie_API_Exception('The method for "' . $subMethod . '" cannot be found.');
             }
 
-            if (
-                $method->id === 'ideal'
-                && (!$this->hasField('mollie_ideal_issuer') || $this->getField('mollie_ideal_issuer') == '')
-            ) {
-                throw new Mollie_API_Exception('No iDeal Issuer selected! Expecting "ideal_issuer" field to be submitted.');
-            }
-
             $webhookUrl = $this->modx->getOption('server_protocol') . '://' . $this->modx->getOption('http_host');
             $webhookUrl .= $this->service->config['connectorUrl'] . '?action=webhook';
 
@@ -255,32 +248,5 @@ class SimpleCartMolliePaymentGateway extends SimpleCartGateway
         if (!($this->service instanceof simplecart_mollie)) { return false; }
 
         return true;
-    }
-
-    private function getIdealContent() {
-
-        $tpl = $this->getProperty('mollieIDealRowTpl', 'idealRow');
-        $outerTpl = $this->getProperty('mollieIDealOuterTpl', 'idealOuter');
-        $outputSeparator = $this->getProperty('outputSeparator', "\n");
-        $output = '';
-        $idx = 1;
-
-        /** @var Mollie_Api_Object_Issuer[] $banks */
-        $banks = $this->mollie->issuers->all()->getIterator();
-        foreach ($banks as $key => $bank) {
-
-            $phs = (array) $bank;
-
-            $output .= $this->service->getChunk($tpl, $phs) . $outputSeparator;
-            $idx++;
-        }
-
-        if (!empty($output) && !empty($outerTpl)) {
-
-            $phs = array('wrapper' => $output);
-            $output = $this->service->getChunk($outerTpl, $phs) . $outputSeparator;
-        }
-
-        return $output;
     }
 }
