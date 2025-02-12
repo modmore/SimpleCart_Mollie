@@ -1,13 +1,17 @@
 <?php
 
-require_once dirname(__FILE__) . '/lib/Mollie/API/Autoloader.php';
+use Mollie\Api\Exceptions\ApiException;
+use Mollie\Api\MollieApiClient;
+use Mollie\Api\Resources\Method;
+
+require_once __DIR__ . '/vendor/autoload.php';
 
 class SimpleCartMolliePaymentGateway extends SimpleCartGateway
 {
     /** @var simplecart_mollie $service */
     protected $service;
 
-    /** @var Mollie_Api_Client $mollie */
+    /** @var MollieApiClient $mollie */
     public $mollie;
 
     /** {@inheritDoc} */
@@ -52,8 +56,8 @@ class SimpleCartMolliePaymentGateway extends SimpleCartGateway
 
             $total = $this->method->cartTotal;
 
-            /** @var Mollie_Api_Object_Method[] $methods */
-            $methods = $this->mollie->methods->all()->getIterator();
+            /** @var Method[] $methods */
+            $methods = $this->mollie->methods->allActive()->getIterator();
             foreach ($methods as $key => $method) {
                 if (!empty($filtered) && !in_array($method->id, $filtered)) {
                     continue;
@@ -61,8 +65,8 @@ class SimpleCartMolliePaymentGateway extends SimpleCartGateway
 
                 // Only show payment methods that allow transactions within the provided range
                 if (
-                    ($total > (float)$method->amount->maximum)
-                    || ($total < (float)$method->amount->minimum)
+                    ($total > (float)$method->maximumAmount->value)
+                    || ($total < (float)$method->minimumAmount->value)
                 ) {
                     continue;
                 }
@@ -125,7 +129,7 @@ class SimpleCartMolliePaymentGateway extends SimpleCartGateway
 
             return $output;
         }
-        catch (Mollie_API_Exception $e) {
+        catch (ApiException $e) {
 
             $this->modx->log(modX::LOG_LEVEL_ERROR, '[SimpleCart] Mollie Error: ' . $e->getMessage());
             return false;
@@ -143,22 +147,24 @@ class SimpleCartMolliePaymentGateway extends SimpleCartGateway
             $paymentKey = $this->getProperty('paymentKey', 'paymentMethod');
             $params = $this->modx->request->getParameters(array($paymentKey), 'POST');
             if (!array_key_exists($paymentKey, $params) || stristr($params[$paymentKey], '~') === false) {
-                throw new Mollie_API_Exception('No method selected! Expecting "' . $paymentKey . '", with format "{id}-{method.id}".');
+                throw new ApiException('No method selected! Expecting "' . $paymentKey . '", with format "{id}-{method.id}". This can happen when Mollie cannot be reached.');
             }
             $subMethod = explode('~', $params[$paymentKey]);
             $subMethod = $subMethod[0];
             $method = $this->mollie->methods->get($subMethod);
 
             if (empty($method) || $method->id != $subMethod) {
-                throw new Mollie_API_Exception('The method for "' . $subMethod . '" cannot be found.');
+                throw new ApiException('The method for "' . $subMethod . '" cannot be found.');
             }
 
             $webhookUrl = $this->modx->getOption('server_protocol') . '://' . $this->modx->getOption('http_host');
             $webhookUrl .= $this->service->config['connectorUrl'] . '?action=webhook';
 
-            /** @var Mollie_Api_Object_Payment $payment */
             $payment = $this->mollie->payments->create(array(
-                'amount' => str_replace(',', '.', $this->order->get('total')),
+                'amount' => [
+                    'currency' => $this->simplecart->currency->get('name'),
+                    'value' => str_replace(',', '.', $this->order->get('total')),
+                ],
                 'description' => $this->modx->lexicon('simplecart.methods.yourorderat', array(
                     'site_name' => $this->modx->getOption('site_name'),
                     '+site_name' => $this->modx->getOption('site_name'),
@@ -179,12 +185,12 @@ class SimpleCartMolliePaymentGateway extends SimpleCartGateway
             $this->order->set('async_payment_confirmation', true);
             $this->order->save();
 
-            $this->modx->sendRedirect($payment->getPaymentUrl());
+            $this->modx->sendRedirect($payment->getCheckoutUrl());
             return true;
         }
-        catch (Mollie_API_Exception $e) {
+        catch (ApiException $e) {
             $this->order->addLog('Mollie Exception', $e->getMessage());
-            $this->modx->log(modX::LOG_LEVEL_ERROR, '[SimpleCart] Mollie Error: ' . $e->getMessage());
+            $this->modx->log(modX::LOG_LEVEL_ERROR, '[SimpleCart] Mollie Exception: ' . $e->getMessage());
             return false;
         }
     }
@@ -206,14 +212,13 @@ class SimpleCartMolliePaymentGateway extends SimpleCartGateway
 
             $payment = $this->mollie->payments->get($transId);
             if ($payment->isPaid()) {
-                if ($storedStatus !== 'Confirmed') {
-                    $this->order->addLog('Mollie Payment', 'Confirmed');
-                    $this->order->setStatus('finished');
-                    $this->order->save();
-                }
+                $this->order->addLog('Mollie Payment', 'Confirmed');
+                $this->order->setStatus('finished');
+                $this->order->save();
 
                 return true;
             }
+
             // not paid + not pending = some kind of failure
             if (!$payment->isOpen()) {
                 $this->order->addLog('Mollie Payment Failed', $payment->status);
@@ -223,8 +228,8 @@ class SimpleCartMolliePaymentGateway extends SimpleCartGateway
 
             return false;
         }
-        catch (Mollie_API_Exception $e) {
-            $this->modx->log(modX::LOG_LEVEL_ERROR, '[SimpleCart] Mollie Error: ' . $e->getMessage());
+        catch (ApiException $e) {
+            $this->modx->log(modX::LOG_LEVEL_ERROR, '[SimpleCart] Mollie Verify Exception: ' . $e->getMessage());
             return false;
         }
     }
@@ -239,8 +244,13 @@ class SimpleCartMolliePaymentGateway extends SimpleCartGateway
             return false;
         }
 
-        $this->mollie = new Mollie_API_Client();
-        $this->mollie->setApiKey($apiKey);
+        $this->mollie = new MollieApiClient();
+        try {
+            $this->mollie->setApiKey($apiKey);
+        } catch (ApiException $e) {
+            $this->modx->log(modX::LOG_LEVEL_ERROR, 'Could not instantiate Mollie gateway, invalid api_key property: ' . $apiKey);
+            return false;
+        }
 
         // initialize service too
         $corePath = $this->modx->getOption('simplecart_mollie.core_path', null, $this->modx->getOption('core_path') . 'components/simplecart_mollie/') . 'model/simplecart_mollie/';

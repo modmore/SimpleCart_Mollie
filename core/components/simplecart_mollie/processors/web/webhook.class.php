@@ -1,5 +1,7 @@
 <?php
 
+use Mollie\Api\Exceptions\ApiException;
+
 class SimpleCartMollieWebHookProcessor extends modProcessor
 {
     public function process() {
@@ -23,10 +25,9 @@ class SimpleCartMollieWebHookProcessor extends modProcessor
                 return $this->failure('Failed to get the Transaction ID');
             }
 
-            /** @var Mollie_Api_Object_Payment $payment */
             try {
                 $payment = $method->gateway->mollie->payments->get($transId);
-            } catch (Mollie_API_Exception $e) {
+            } catch (ApiException $e) {
                 $this->modx->log(modX::LOG_LEVEL_ERROR, '[SimpleCart.Mollie] Webhook triggered for payment ' . $transId . ', received exception  ' . get_class($e) . ': ' . $e->getMessage());
                 return $this->failure('Failed to load the order');
             }

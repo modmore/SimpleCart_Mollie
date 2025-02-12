@@ -1,3 +1,9 @@
+Mollie Gateway for SimpleCart v3.0.0-pl
+----------------------------------------------
+Released on 2025-02-13
+
+- Upgrade to Mollie's v2 API as v1 was discontinued on Dec 31st, 2024.
+
 Mollie Gateway for SimpleCart v2.0.0-pl
 ----------------------------------------------
 Released on 2024-12-04
