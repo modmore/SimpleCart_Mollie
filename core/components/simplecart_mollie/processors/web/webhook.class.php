@@ -4,12 +4,12 @@ use Mollie\Api\Exceptions\ApiException;
 
 class SimpleCartMollieWebHookProcessor extends modProcessor
 {
-    public function process() {
+    public function process()
+    {
 
         /** @var simpleCartMethod $method */
         $method = $this->modx->getObject('simpleCartMethod', array('name' => 'mollie'));
         if (!empty($method) && is_object($method)) {
-
             $method->getGateway();
             if (!($method->gateway instanceof SimpleCartMolliePaymentGateway)) {
                 return $this->failure('Failed to load Mollie Payment Gateway');

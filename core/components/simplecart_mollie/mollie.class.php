@@ -17,15 +17,18 @@ class SimpleCartMolliePaymentGateway extends SimpleCartGateway
     /** {@inheritDoc} */
     public $overwriteOutput = true;
 
-    public function view() {
+    public function view()
+    {
 
         try {
-
-            if (!$this->initMollie()) { return false; }
+            if (!$this->initMollie()) {
+                return false;
+            }
 
             // method properties
             $mPhs = $this->method->toArray();
-            $mPhs['paymentKey'] = $this->getProperty('paymentKey', 'paymentMethod');;
+            $mPhs['paymentKey'] = $this->getProperty('paymentKey', 'paymentMethod');
+            ;
             $idx = $this->method->getIdx();
             $output = '';
 
@@ -33,14 +36,13 @@ class SimpleCartMolliePaymentGateway extends SimpleCartGateway
             $tpl = $this->getProperty('mollieMethodRowTpl', $this->getProperty('tpl', 'scPaymentMethod'));
             $outerTpl = $this->getProperty('mollieMethodOuterTpl');
             $outputSeparator = $this->getProperty('outputSeparator', "\n");
-            $selectedFirst = (boolean) $this->getProperty('selectedFirst', 1, 'isset');
+            $selectedFirst = (bool) $this->getProperty('selectedFirst', 1, 'isset');
             $selected = $this->getProperty('selected', -1);
 
             // get filtered methods, if any
             $filtered = array();
             $filterMethod = $this->getProperty('filterMethod');
             if (!empty($filterMethod)) {
-
                 $filtered = explode(',', $filterMethod);
                 foreach ($filtered as $k => $v) {
                     if (!is_numeric($v) && stristr($v, '~') !== false) {
@@ -122,7 +124,6 @@ class SimpleCartMolliePaymentGateway extends SimpleCartGateway
             }
 
             if (!empty($output) && !empty($outerTpl)) {
-
                 $phs = array('wrapper' => $output);
                 $output = $this->service->getChunk($outerTpl, $phs) . $outputSeparator;
             }
@@ -130,17 +131,17 @@ class SimpleCartMolliePaymentGateway extends SimpleCartGateway
             return $output;
         }
         catch (ApiException $e) {
-
             $this->modx->log(modX::LOG_LEVEL_ERROR, '[SimpleCart] Mollie Error: ' . $e->getMessage());
             return false;
         }
     }
 
-    public function submit() {
-
+    public function submit()
+    {
         try {
-
-            if (!$this->initMollie()) { return false; }
+            if (!$this->initMollie()) {
+                return false;
+            }
             $this->modx->lexicon->load('simplecart:cart', 'simplecart:methods');
 
             // figure out the sub-method selected
@@ -195,14 +196,18 @@ class SimpleCartMolliePaymentGateway extends SimpleCartGateway
         }
     }
 
-    public function verify() {
+    public function verify()
+    {
 
         try {
-
-            if (!$this->initMollie()) { return false; }
+            if (!$this->initMollie()) {
+                return false;
+            }
 
             $transId = $this->order->getLog('Mollie Transaction ID');
-            if (empty($transId)) { return false; }
+            if (empty($transId)) {
+                return false;
+            }
 
             // If previously stored as confirmed, we don't double check the API
             $storedStatus = $this->order->getLog('Mollie Payment');
@@ -236,7 +241,8 @@ class SimpleCartMolliePaymentGateway extends SimpleCartGateway
 
     /** CUSTOM METHODS **/
 
-    public function initMollie() {
+    public function initMollie()
+    {
 
         $apiKey = $this->getProperty('api_key');
         if (empty($apiKey)) {
@@ -255,7 +261,9 @@ class SimpleCartMolliePaymentGateway extends SimpleCartGateway
         // initialize service too
         $corePath = $this->modx->getOption('simplecart_mollie.core_path', null, $this->modx->getOption('core_path') . 'components/simplecart_mollie/') . 'model/simplecart_mollie/';
         $this->service = $this->modx->getService('simplecart_mollie', 'simplecart_mollie', $corePath, array());
-        if (!($this->service instanceof simplecart_mollie)) { return false; }
+        if (!($this->service instanceof simplecart_mollie)) {
+            return false;
+        }
 
         return true;
     }
