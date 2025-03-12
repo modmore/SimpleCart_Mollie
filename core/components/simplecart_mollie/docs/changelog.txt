@@ -1,6 +1,6 @@
 Mollie Gateway for SimpleCart v3.0.1-pl
 ----------------------------------------------
-Released on 2025-02-13
+Released on 2025-03-12
 
 - Fix issue with certain amounts and locales [S47373]
 

@@ -5,7 +5,7 @@ class simplecart_mollie
     /** Version indexes **/
     public $version_major = '3';
     public $version_minor = '0';
-    public $version_patch = '0';
+    public $version_patch = '1';
     public $version_release = 'pl';
     public $version_index = '';
 
