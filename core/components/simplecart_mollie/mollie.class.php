@@ -164,7 +164,7 @@ class SimpleCartMolliePaymentGateway extends SimpleCartGateway
             $payment = $this->mollie->payments->create(array(
                 'amount' => [
                     'currency' => $this->simplecart->currency->get('name'),
-                    'value' => str_replace(',', '.', $this->order->get('total')),
+                    'value' => number_format($this->order->get('total'), 2, '.', ''),
                 ],
                 'description' => $this->modx->lexicon('simplecart.methods.yourorderat', array(
                     'site_name' => $this->modx->getOption('site_name'),
