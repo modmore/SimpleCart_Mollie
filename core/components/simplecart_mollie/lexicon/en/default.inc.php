@@ -21,6 +21,10 @@ $_lang['simplecart.methods.payment.mollie.creditcard'] = "Credit Card";
 $_lang['simplecart.methods.payment.mollie.creditcard.desc'] = "Pay from all around the world. We support popular cards like Mastercard, Maestro, Visa and others.";
 $_lang['simplecart.methods.payment.mollie.creditcard.orderdesc'] = "You have paid online with your creditcard (via Mollie).";
 
+$_lang['simplecart.methods.payment.mollie.eps'] = "EPS";
+$_lang['simplecart.methods.payment.mollie.eps.desc'] = "Pay directly with your Austrian bank via the Electronic Payment Standard.";
+$_lang['simplecart.methods.payment.mollie.eps.orderdesc'] = "You have paid online with EPS (via Mollie).";
+
 $_lang['simplecart.methods.payment.mollie.mistercash'] = "Mister Cash / Bancontact";
 $_lang['simplecart.methods.payment.mollie.mistercash.desc'] = "Bancontact/Mister Cash uses a physical debit card that is connected to a Belgian checking account.";
 $_lang['simplecart.methods.payment.mollie.mistercash.orderdesc'] = "You have paid online with your debit card trough Mister Cash/Bancontact (via Mollie).";
